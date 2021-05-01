@@ -48,4 +48,21 @@ app.get('/:slug', async (req, res, next) => {
 });
 
 
+// 404 Handler
+app.use((req, res, next) =>{
+    const error = new Error(`The requested URL: ${req.url} was NOT found on this server!`);
+    error.statusCode = 404;
+    next(error);
+});
+
+// Error Handling Middleware
+app.use((error, req, res, next) => {
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({
+        ok: 0,
+        error: error.message
+    })
+});
+
+
 module.exports = app;
