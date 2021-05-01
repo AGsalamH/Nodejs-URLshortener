@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
+
+
 const urlSchema = new Schema({
     originalUrl: {
         type: String,
@@ -13,9 +16,15 @@ const urlSchema = new Schema({
 }, {timestamps: {createdAt: 'created', updatedAt: 'updated'}});
 
 
-urlSchema.path('slug').validate(slug => {
-    
-});
+// Validate slug Uniqeness
+urlSchema.path('slug').validate(async function (slug) {
+   const slugExists = await this.collection.findOne({slug});
+   return slugExists ? false : true; 
+}, 'slug must be unique, try another one');
+
+
+// Validate URL format
+urlSchema.path('originalUrl').validate(url => url.match(URL_REGEX), 'Invalid URL format');
 
 
 
