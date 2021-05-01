@@ -33,6 +33,8 @@ app.post('/shorten', async (req, res, next) => {
         })
     } catch (error) {
         console.log(error);
+        const formattedErrors = formatErrors(error);
+        next(formattedErrors);
     }
 });
 
@@ -48,6 +50,8 @@ app.get('/:slug', async (req, res, next) => {
         res.redirect(shortUrl.originalUrl);
     } catch (error) {
         console.log(error);
+        const formattedErrors = formatErrors(error);
+        next(formattedErrors);
     }
 });
 
@@ -64,8 +68,9 @@ app.use((error, req, res, next) => {
     const statusCode = error.statusCode || 500;
     res.status(statusCode).json({
         ok: 0,
-        error: error.message
-    })
+        error: error.message || undefined,
+        validationErrors: Array.isArray(error) ? error : undefined
+    });
 });
 
 
