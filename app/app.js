@@ -1,10 +1,14 @@
 // Dependencies
-const { urlencoded } = require('express');
 const express = require('express');
+const mongoose  = require('mongoose');
 const shortid = require('shortid');
 
 // Models
 const ShortUrl = require('./ShortUrlModel');
+
+// Utils
+const formatErrors = require('./formatErrors');
+
 
 // Initialize express app
 const app = express();
@@ -12,7 +16,7 @@ const app = express();
 
 // Middlewares
 app.use(express.json());
-app.use(urlencoded({extended: true}));
+app.use(express.urlencoded({extended: true}));
 
 // POST /shorten
 app.post('/shorten', async (req, res, next) => {
